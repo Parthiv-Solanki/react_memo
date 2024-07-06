@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { memo } from "react";
 
-function App() {
+// A simple component that receives a prop and renders it
+const MyComponent = ({ name, age }) => {
+  console.log("MyComponent re-rendered");
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Name: {name}</h1>
+      <h2>Age: {age}</h2>
     </div>
   );
-}
+};
+
+// Custom comparison function to check previous and next props
+const areEqual = (prevProps, nextProps) => {
+  // Compare name and age props
+  if (prevProps.name === nextProps.name && prevProps.age === nextProps.age) {
+    return true; // props are equal, prevent re-render
+  }
+  return false; // props are not equal, allow re-render
+};
+
+// Memoize the component with the custom comparison function
+const MemoizedMyComponent = memo(MyComponent, areEqual);
+
+const App = () => {
+  const [name, setName] = React.useState("John");
+  const [age, setAge] = React.useState(25);
+
+  return (
+    <div>
+      <button onClick={() => setName(name === "John" ? "Doe" : "John")}>
+        Toggle Name
+      </button>
+      <button onClick={() => setAge(age + 1)}>Increment Age</button>
+      <MemoizedMyComponent name={name} age={age} />
+    </div>
+  );
+};
 
 export default App;
